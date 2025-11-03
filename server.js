@@ -6,20 +6,20 @@ const bodyParser = require("body-parser");
 
 const app = express();
 
-// ✅ Porta correta para Render
+// Porta correta para Render
 const PORT = process.env.PORT || 3000;
 
-// ✅ Arquivo de dados (na raiz)
+// Caminho do arquivo de dados
 const ARQUIVO = path.join(__dirname, "dados.json");
 
-// === Middlewares ===
+// Middlewares
 app.use(bodyParser.json());
 app.use(cookieParser());
 
-// ✅ Servir arquivos diretamente da raiz (já que não existe pasta public)
-app.use(express.static(__dirname));
+// ✅ Servir arquivos estáticos da pasta public
+app.use(express.static(path.join(__dirname, "public")));
 
-// === Funções auxiliares ===
+// Funções auxiliares
 function lerDados() {
   try {
     if (!fs.existsSync(ARQUIVO)) {
@@ -40,20 +40,18 @@ function salvarDados(dados) {
   }
 }
 
-// === Middleware de autenticação ===
+// Middleware de autenticação
 function protegerRota(req, res, next) {
   if (req.cookies.usuario) next();
   else res.redirect("/login");
 }
 
-// === Rotas ===
-
-// ✅ Página de login (ajustada)
+// ✅ Página de login (agora funcionando)
 app.get("/login", (req, res) => {
   res.sendFile(path.join(__dirname, "login.html"));
 });
 
-// ✅ Login
+// Login
 app.post("/login", (req, res) => {
   const { usuario, senha } = req.body;
   const dados = lerDados();
@@ -66,31 +64,28 @@ app.post("/login", (req, res) => {
     res.cookie("usuario", usuario, { httpOnly: true, sameSite: "lax" });
     res.json({ sucesso: true });
   } else {
-    res.status(401).json({
-      sucesso: false,
-      mensagem: "Usuário ou senha incorretos",
-    });
+    res.status(401).json({ sucesso: false, mensagem: "Usuário ou senha incorretos" });
   }
 });
 
-// ✅ Logout
+// Logout
 app.get("/logout", (req, res) => {
   res.clearCookie("usuario");
   res.redirect("/login");
 });
 
-// ✅ Página principal (ajustada)
+// ✅ Página principal (corrigida)
 app.get("/", protegerRota, (req, res) => {
   res.sendFile(path.join(__dirname, "index.html"));
 });
 
-// ✅ Obter números
+// Obter números
 app.get("/numeros", protegerRota, (req, res) => {
   const dados = lerDados();
   res.json(dados.numerosSelecionados);
 });
 
-// ✅ Selecionar número
+// Selecionar número
 app.post("/selecionar", protegerRota, (req, res) => {
   const { numero } = req.body;
   const dados = lerDados();
@@ -108,7 +103,7 @@ app.post("/selecionar", protegerRota, (req, res) => {
   }
 });
 
-// ✅ Resetar números
+// Resetar
 app.post("/resetar", protegerRota, (req, res) => {
   const dados = lerDados();
   dados.numerosSelecionados = [];
@@ -116,7 +111,7 @@ app.post("/resetar", protegerRota, (req, res) => {
   res.json({ sucesso: true });
 });
 
-// === Inicialização ===
+// Inicialização
 app.listen(PORT, () => {
   console.log(`✅ Servidor rodando na porta ${PORT}`);
 });
