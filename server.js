@@ -9,15 +9,15 @@ const app = express();
 // ✅ Porta correta para Render
 const PORT = process.env.PORT || 3000;
 
-// ✅ Caminho correto do arquivo de dados
+// ✅ Arquivo de dados (na raiz)
 const ARQUIVO = path.join(__dirname, "dados.json");
 
 // === Middlewares ===
 app.use(bodyParser.json());
 app.use(cookieParser());
 
-// ✅ Servir arquivos estáticos corretamente
-app.use(express.static(path.join(__dirname, "public")));
+// ✅ Servir arquivos diretamente da raiz (já que não existe pasta public)
+app.use(express.static(__dirname));
 
 // === Funções auxiliares ===
 function lerDados() {
@@ -48,15 +48,16 @@ function protegerRota(req, res, next) {
 
 // === Rotas ===
 
-// ✅ Login — caminho corrigido
+// ✅ Página de login (ajustada)
 app.get("/login", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "login.html"));
+  res.sendFile(path.join(__dirname, "login.html"));
 });
 
-// Login
+// ✅ Login
 app.post("/login", (req, res) => {
   const { usuario, senha } = req.body;
   const dados = lerDados();
+
   const user = dados.usuarios.find(
     (u) => u.usuario === usuario && u.senha === senha
   );
@@ -72,24 +73,24 @@ app.post("/login", (req, res) => {
   }
 });
 
-// Logout
+// ✅ Logout
 app.get("/logout", (req, res) => {
   res.clearCookie("usuario");
   res.redirect("/login");
 });
 
-// Página principal
+// ✅ Página principal (ajustada)
 app.get("/", protegerRota, (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "index.html"));
+  res.sendFile(path.join(__dirname, "index.html"));
 });
 
-// Obter números
+// ✅ Obter números
 app.get("/numeros", protegerRota, (req, res) => {
   const dados = lerDados();
   res.json(dados.numerosSelecionados);
 });
 
-// Selecionar número
+// ✅ Selecionar número
 app.post("/selecionar", protegerRota, (req, res) => {
   const { numero } = req.body;
   const dados = lerDados();
@@ -107,7 +108,7 @@ app.post("/selecionar", protegerRota, (req, res) => {
   }
 });
 
-// Resetar todos
+// ✅ Resetar números
 app.post("/resetar", protegerRota, (req, res) => {
   const dados = lerDados();
   dados.numerosSelecionados = [];
