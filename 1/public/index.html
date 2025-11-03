@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Controle de Números</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h2>Seleção de Números (0–100)</h2>
+
+  <div>
+    <button class="botao" id="resetBtn">Resetar Todos</button>
+    <button class="botao" id="voltarBtn">Voltar Anterior</button>
+    <button class="botao" onclick="window.location.href='/logout'">Sair</button>
+  </div>
+
+  <div id="container"></div>
+
+  <div class="rodape">Os números selecionados são salvos no servidor.</div>
+
+  <div id="popup">
+    <div id="popup-content">
+      <p id="popup-text"></p>
+      <div id="popup-buttons"></div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
